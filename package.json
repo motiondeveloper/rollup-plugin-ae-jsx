@@ -6,7 +6,8 @@
   "module": "dist/rollup-plugin-ae-jsx.es.js",
   "scripts": {
     "build": "rollup -c",
-    "test": "echo \"Error: no test specified\""
+    "test": "echo \"Error: no test specified\"",
+    "publish": "np"
   },
   "files": [
     "dist",
