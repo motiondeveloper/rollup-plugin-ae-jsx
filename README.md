@@ -41,11 +41,10 @@ export default {
 };
 ```
 
-> The output extension should be `.jsx` and format `cjs` to ensure After Effects compatible files.
+> - The output extension should be `.jsx` and format `cjs` to ensure After Effects compatible files.
+> - `rollup-plugin-ae-jsx` should be placed in `plugins` _after_ any other plugins.
 
 Then call `rollup` either via the [CLI](https://www.rollupjs.org/guide/en/#command-line-reference) or the [API](https://www.rollupjs.org/guide/en/#javascript-api).
-
-`rollup-plugin-ae-jsx` should be placed in `plugins` _after_ any other plugins.
 
 ## Limitations
 
