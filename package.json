@@ -1,0 +1,25 @@
+{
+  "name": "rollup-plugin-ae-jsx",
+  "version": "1.0.0",
+  "description": "RollupJS plugin to turn output into After Effects compatible `.jsx` JSON files ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/motiondeveloper/rollup-plugin-ae-jsx.git"
+  },
+  "keywords": [
+    "rollup",
+    "after",
+    "effects",
+    "ae"
+  ],
+  "author": "Tim Haywood",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/motiondeveloper/rollup-plugin-ae-jsx/issues"
+  },
+  "homepage": "https://github.com/motiondeveloper/rollup-plugin-ae-jsx#readme"
+}
