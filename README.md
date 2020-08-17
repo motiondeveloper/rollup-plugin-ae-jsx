@@ -27,17 +27,15 @@ npm install rollup-plugin-ae-jsx --save-dev
 Create a `rollup.config.js` [configuration file](https://www.rollupjs.org/guide/en/#configuration-files), import the plugin, and add it to the `plugins` array:
 
 ```js
-import afterEffectJsx from './rollup-plugin-ae-jsx';
+import afterEffectJsx from "./rollup-plugin-ae-jsx";
 
 export default {
-  input: 'src/index.js',
+  input: "src/index.js",
   output: {
-    file: 'dist/index.jsx',
-    format: 'cjs'
+    file: "dist/index.jsx",
+    format: "cjs",
   },
-  plugins: [
-    afterEffectsJsx()
-  ]
+  plugins: [afterEffectsJsx()],
 };
 ```
 
@@ -48,9 +46,9 @@ Then call `rollup` either via the [CLI](https://www.rollupjs.org/guide/en/#comma
 
 ## Limitations
 
-Since After Effects compatible JSON isn't valid JavaScript, transformations must be done on the output code as a string rather than the AST. This means success is dependant on the formatting of the code.
-
-While not perfect, it works well enough for our use, but errors may occur adapting it to work with your own code.
+- Output code must be in a single file
+- Makes some manual transformations outside of the AST
+- Pretty experimental!
 
 ## Meta
 
