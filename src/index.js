@@ -113,7 +113,7 @@ export default function afterEffectsJsx(options = {}) {
         },
       });
       code = magicString.toString();
-      console.log(exports);
+      console.log(`Exported JSX: ${exports}`);
       return { code, map: null, moduleSideEffects: "no-treeshake" };
     },
     generateBundle(options = {}, bundle, isWrite) {
