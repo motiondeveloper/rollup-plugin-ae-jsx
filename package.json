@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rollup -c",
     "test": "echo \"Error: no test specified\"",
-    "publish": "np"
+    "publish": "npm run build && np"
   },
   "files": [
     "dist",
