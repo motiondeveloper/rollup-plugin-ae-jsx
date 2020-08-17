@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-ae-jsx",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "RollupJS plugin to turn output into After Effects compatible `.jsx` JSON files ",
   "main": "dist/rollup-plugin-ae-jsx.cjs.js",
   "module": "dist/rollup-plugin-ae-jsx.es.js",
