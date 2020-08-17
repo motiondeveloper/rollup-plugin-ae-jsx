@@ -35,5 +35,9 @@
   "bugs": {
     "url": "https://github.com/motiondeveloper/rollup-plugin-ae-jsx/issues"
   },
-  "homepage": "https://github.com/motiondeveloper/rollup-plugin-ae-jsx#readme"
+  "homepage": "https://github.com/motiondeveloper/rollup-plugin-ae-jsx#readme",
+  "dependencies": {
+    "estree-walker": "^2.0.1",
+    "magic-string": "^0.25.7"
+  }
 }
