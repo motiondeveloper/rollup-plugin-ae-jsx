@@ -8,7 +8,6 @@ export default function afterEffectsJsx(options = {}) {
   return {
     name: "after-effects-jsx", // this name will show up in warnings and errors
     transform(code, id) {
-      console.log(code);
       let ast;
       try {
         ast = this.parse(code);
