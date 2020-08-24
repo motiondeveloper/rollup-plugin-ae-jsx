@@ -157,14 +157,17 @@ function wrapExportsInQuotes(exports, code) {
 }
 
 function separateExportsWithCommas(exports, code) {
-  let codeLines = code.split("\n").map((line) => {
+  let codeLines = code.split("\n").map((line, lineIndex) => {
     let newLine = line;
-    exports.forEach((name) => {
+    exports.forEach((name, exportIndex) => {
       if (line.startsWith(`"${name}"`)) {
-        newLine = newLine.replace(";", ",");
+        newLine = newLine.replace(
+          ";",
+          exportIndex === exports.length ? "," : ""
+        );
       }
     });
-    if (newLine === "}") {
+    if (newLine === "}" && lineIndex !== codeLines.length) {
       newLine = "},";
     }
     return newLine;
