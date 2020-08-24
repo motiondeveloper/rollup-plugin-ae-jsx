@@ -157,7 +157,8 @@ function wrapExportsInQuotes(exports, code) {
 }
 
 function separateExportsWithCommas(exports, code) {
-  let codeLines = code.split("\n").map((line, lineIndex) => {
+  let codeLines = code.split("\n");
+  const fixedLines = codeLines.map((line, lineIndex) => {
     let newLine = line;
     exports.forEach((name, exportIndex) => {
       if (line.startsWith(`"${name}"`)) {
@@ -172,7 +173,7 @@ function separateExportsWithCommas(exports, code) {
     }
     return newLine;
   });
-  return codeLines.join("\n");
+  return fixedLines.join("\n");
 }
 
 function indentAllLines(code) {
