@@ -44,6 +44,13 @@ export default {
 
 Then call `rollup` either via the [CLI](https://www.rollupjs.org/guide/en/#command-line-reference) or the [API](https://www.rollupjs.org/guide/en/#javascript-api).
 
+## Proccess
+
+1. Creating a list of the exported functions and variables from the index file
+2. Removing non-compatible statements: `['ExpressionStatement', 'DebuggerStatement', 'ImportDeclaration', 'ExportNamedDeclaration'];`
+3. Converting function and variable declarations into `.jsx` compliant syntax
+4. Wrapping in braces (`{}`)
+
 ## Meta
 
 [CONTRIBUTING](/.github/CONTRIBUTING.md)
