@@ -44,12 +44,6 @@ export default {
 
 Then call `rollup` either via the [CLI](https://www.rollupjs.org/guide/en/#command-line-reference) or the [API](https://www.rollupjs.org/guide/en/#javascript-api).
 
-## Limitations
-
-- Output code must be in a single file
-- Makes some manual transformations outside of the AST
-- Pretty experimental!
-
 ## Meta
 
 [CONTRIBUTING](/.github/CONTRIBUTING.md)
