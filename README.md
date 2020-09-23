@@ -1,10 +1,8 @@
 [npm]: https://img.shields.io/npm/v/rollup-plugin-ae-jsx
 [npm-url]: https://www.npmjs.com/package/rollup-plugin-ae-jsx
 [size]: https://packagephobia.now.sh/badge?p=rollup-plugin-ae-jsx
-[size-url]: https://packagephobia.now.sh/result?prollup-plugin-ae-jsx
 
 [![npm][npm]][npm-url]
-[![size][size]][size-url]
 
 # rollup-plugin-ae-jsx
 
