@@ -39,5 +39,8 @@
   "dependencies": {
     "estree-walker": "^2.0.1",
     "magic-string": "^0.25.7"
+  },
+  "prettier": {
+    "useTabs": false
   }
 }
