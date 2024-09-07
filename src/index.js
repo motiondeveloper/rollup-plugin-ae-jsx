@@ -1,23 +1,24 @@
-import { walk } from "estree-walker";
-import MagicString from "magic-string";
+import { walk } from 'estree-walker';
+import MagicString from 'magic-string';
 
 const whitespace = /\s/;
 
 // these will be removed
 const disallowedNodeTypes = [
-  "ExpressionStatement",
-  "DebuggerStatement",
-  "ImportDeclaration",
-  "ExportNamedDeclaration",
+  'ExpressionStatement',
+  'DebuggerStatement',
+  'ImportDeclaration',
+  'ExportNamedDeclaration',
 ];
 
 // these will also be removed
-const expressionGlobals = ["thisComp", "thisLayer", "thisProperty"];
+const expressionGlobals = ['thisComp', 'thisLayer', 'thisProperty'];
 
 export default function afterEffectsJsx(options = { wrap: false }) {
   const exports = [];
+  const wrap = options.wrap;
   return {
-    name: "after-effects-jsx", // this name will show up in warnings and errors
+    name: 'after-effects-jsx', // this name will show up in warnings and errors
     generateBundle(options = {}, bundle, isWrite) {
       // format each file to be ae-jsx
       for (const file in bundle) {
@@ -32,7 +33,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
           throw err;
         }
         // create magic string to perform operations on
-        const magicString = new MagicString(code);
+        let magicString = new MagicString(code);
 
         // removes characters from the magicString
         function remove(start, end) {
@@ -42,7 +43,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
 
         function isBlock(node) {
           return (
-            node && (node.type === "BlockStatement" || node.type === "Program")
+            node && (node.type === 'BlockStatement' || node.type === 'Program')
           );
         }
 
@@ -53,7 +54,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
           if (isBlock(parent)) {
             remove(node.start, node.end);
           } else {
-            magicString.overwrite(node.start, node.end, "(void 0);");
+            magicString.overwrite(node.start, node.end, '(void 0);');
           }
         }
 
@@ -61,7 +62,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
         // that are exports.[exportName] = [exportName];
         walk(ast, {
           enter(node, parent) {
-            Object.defineProperty(node, "parent", {
+            Object.defineProperty(node, 'parent', {
               value: parent,
               enumerable: false,
               configurable: true,
@@ -69,7 +70,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
 
             if (
               // it's an export expression statement
-              node.type === "ExportNamedDeclaration"
+              node.type === 'ExportNamedDeclaration'
             ) {
               exports.push(
                 ...node.specifiers.map((exportNode) => exportNode.local.name)
@@ -78,20 +79,20 @@ export default function afterEffectsJsx(options = { wrap: false }) {
           },
         });
 
-        if (options.wrap) {
+        if (wrap) {
           walk(ast, {
             enter(node, parent) {
-              Object.defineProperty(node, "parent", {
+              Object.defineProperty(node, 'parent', {
                 value: parent,
                 enumerable: false,
                 configurable: true,
               });
 
-              if (node.type === "VariableDeclaration") {
+              if (node.type === 'VariableDeclaration') {
                 const variableName = node.declarations.map(
                   (declaration) => declaration.id.name
                 )[0];
-                if (!expressionGlobals.includes(variableName)) {
+                if (expressionGlobals.includes(variableName)) {
                   // Remove variables that aren't exported
                   remove(node.start, node.end);
                 }
@@ -107,20 +108,29 @@ export default function afterEffectsJsx(options = { wrap: false }) {
           });
 
           magicString
-            .prepend("get() {\n")
-            .append(`\nreturn {${exports.join(",\n\t")}}\n}`);
+            .prepend('function get() {\n')
+            .append(`\nreturn {${exports.join(',\n\t')}}\n}`);
+
+          // see extra `format` fn below!
+          
+          // const asString = format(magicString.toString()).replace(
+          //   `function get() {`,
+          //   `get() {`
+          // );
+
+          // magicString = new MagicString(asString);
         } else {
           // Remove non exported nodes and convert
           // to object property style compatible syntax
           walk(ast, {
             enter(node, parent) {
-              Object.defineProperty(node, "parent", {
+              Object.defineProperty(node, 'parent', {
                 value: parent,
                 enumerable: false,
                 configurable: true,
               });
 
-              if (node.type === "FunctionDeclaration") {
+              if (node.type === 'FunctionDeclaration') {
                 // Deal with functions
                 const functionName = node.id.name;
                 if (!exports.includes(functionName)) {
@@ -130,11 +140,11 @@ export default function afterEffectsJsx(options = { wrap: false }) {
                   // remove the function keyword
                   magicString.remove(node.start, node.id.start);
                   // add a trailing comma
-                  magicString.appendLeft(node.end, ",");
+                  magicString.appendLeft(node.end, ',');
                 }
                 // don't process child nodes
                 this.skip();
-              } else if (node.type === "VariableDeclaration") {
+              } else if (node.type === 'VariableDeclaration') {
                 // deal with variables
                 const variableName = node.declarations.map(
                   (declaration) => declaration.id.name
@@ -153,13 +163,13 @@ export default function afterEffectsJsx(options = { wrap: false }) {
                     `${variableName}:`
                   );
                   const endsInSemiColon =
-                    magicString.slice(node.end - 1, node.end) === ";";
+                    magicString.slice(node.end - 1, node.end) === ';';
                   if (endsInSemiColon) {
                     // replace ; with ,
-                    magicString.overwrite(node.end - 1, node.end, ",");
+                    magicString.overwrite(node.end - 1, node.end, ',');
                   } else {
                     // or add trailing comma
-                    magicString.appendLeft(node.end, ",");
+                    magicString.appendLeft(node.end, ',');
                   }
                 }
                 // don't process child nodes
@@ -177,10 +187,80 @@ export default function afterEffectsJsx(options = { wrap: false }) {
         // Log exports to the terminal
         console.log(`Exported JSX:`, exports);
         // Sanitize output and wrap in braces
-        magicString.trim().indent().prepend("{\n").append("\n}");
+        magicString.trim().prepend('{\n').append('\n}').indent().trimStart();
         // Replace the files code with modified
         bundle[file].code = magicString.toString();
       }
     },
   };
 }
+
+
+// extra: use ts to format... though currently not a dep of `rollup-plugin-ae-jsx`
+
+// https://github.com/vvakame/typescript-formatter/tree/master/lib
+import * as ts from 'typescript';
+
+const defaultOptions = {
+  baseIndentSize: 0,
+  indentSize: 2,
+  tabSize: 2,
+  indentStyle: ts.IndentStyle.Smart,
+  newLineCharacter: '\r\n',
+  convertTabsToSpaces: true,
+  insertSpaceAfterCommaDelimiter: true,
+  insertSpaceAfterSemicolonInForStatements: true,
+  insertSpaceBeforeAndAfterBinaryOperators: true,
+  insertSpaceAfterConstructor: false,
+  insertSpaceAfterKeywordsInControlFlowStatements: true,
+  insertSpaceAfterFunctionKeywordForAnonymousFunctions: false,
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: false,
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: false,
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+  insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
+  insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces: false,
+  insertSpaceAfterTypeAssertion: false,
+  insertSpaceBeforeFunctionParenthesis: false,
+  placeOpenBraceOnNewLineForFunctions: false,
+  placeOpenBraceOnNewLineForControlBlocks: false,
+  insertSpaceBeforeTypeAnnotation: false,
+};
+
+class LanguageServiceHost {
+  constructor() {
+    this.files = {};
+    // for ts.LanguageServiceHost
+    this.getCompilationSettings = () => ts.getDefaultCompilerOptions();
+    this.getScriptFileNames = () => Object.keys(this.files);
+    this.getScriptVersion = (_fileName) => '0';
+    this.getScriptSnapshot = (fileName) => this.files[fileName];
+    this.getCurrentDirectory = () => process.cwd();
+    this.getDefaultLibFileName = (options) => ts.getDefaultLibFilePath(options);
+  }
+  addFile(fileName, text) {
+    this.files[fileName] = ts.ScriptSnapshot.fromString(text);
+  }
+}
+
+function format(text, fileName = 'temp.ts', options = defaultOptions) {
+  const host = new LanguageServiceHost();
+  host.addFile(fileName, text);
+
+  const languageService = ts.createLanguageService(host);
+  const edits = languageService.getFormattingEditsForDocument(
+    fileName,
+    options
+  );
+
+  edits
+    .sort((a, b) => a.span.start - b.span.start)
+    .reverse()
+    .forEach((edit) => {
+      const head = text.slice(0, edit.span.start);
+      const tail = text.slice(edit.span.start + edit.span.length);
+      text = `${head}${edit.newText}${tail}`;
+    });
+
+  return text;
+}
+
