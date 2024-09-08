@@ -111,14 +111,12 @@ export default function afterEffectsJsx(options = { wrap: false }) {
             .prepend('function get() {\n')
             .append(`\nreturn {${exports.join(',\n\t')}}\n}`);
 
-          // see extra `format` fn below!
-          
-          // const asString = format(magicString.toString()).replace(
-          //   `function get() {`,
-          //   `get() {`
-          // );
+          const asString = format(magicString.toString()).replace(
+            `function get() {`,
+            `get() {`
+          );
 
-          // magicString = new MagicString(asString);
+          magicString = new MagicString(asString);
         } else {
           // Remove non exported nodes and convert
           // to object property style compatible syntax
@@ -195,7 +193,6 @@ export default function afterEffectsJsx(options = { wrap: false }) {
   };
 }
 
-
 // extra: use ts to format... though currently not a dep of `rollup-plugin-ae-jsx`
 
 // https://github.com/vvakame/typescript-formatter/tree/master/lib
@@ -263,4 +260,3 @@ function format(text, fileName = 'temp.ts', options = defaultOptions) {
 
   return text;
 }
-
