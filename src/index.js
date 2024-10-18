@@ -111,10 +111,14 @@ export default function afterEffectsJsx(options = { wrap: false }) {
             },
           });
 
-          // wrap entire code in get() method
           magicString
+            // add return statements for exports
+            .append(`\nreturn { ${exports.join(', ')} }`)
+            // indent everything before wrapping
+            .indent()
+            // wrap entire code in get() method
             .prepend('get() {\n')
-            .append(`\nreturn {${exports.join(',\n\t')}}\n}`);
+            .append('\n}');
         } else {
           // Remove non exported nodes and convert
           // to object property style compatible syntax
@@ -183,7 +187,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
         // Log exports to the terminal
         console.log(`Exported JSX:`, exports);
         // Sanitize output and wrap in braces
-        magicString.trim().prepend('{\n').append('\n}').indent().trimStart();
+        magicString.trim().indent().prepend('{\n').append('\n}').trimStart();
         // Replace the files code with modified
         bundle[file].code = magicString.toString();
       }
