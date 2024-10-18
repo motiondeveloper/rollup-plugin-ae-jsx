@@ -80,6 +80,9 @@ export default function afterEffectsJsx(options = { wrap: false }) {
         });
 
         if (wrap) {
+          // Remove expression globals and unsupported code
+          // then wrap in get() method. Less work is needed in this case
+          // everything is wrapped in a single function
           walk(ast, {
             enter(node, parent) {
               Object.defineProperty(node, 'parent', {
@@ -92,8 +95,9 @@ export default function afterEffectsJsx(options = { wrap: false }) {
                 const variableName = node.declarations.map(
                   (declaration) => declaration.id.name
                 )[0];
+
                 if (expressionGlobals.includes(variableName)) {
-                  // Remove variables that aren't exported
+                  // Remove temporary expression global declarations
                   remove(node.start, node.end);
                 }
                 // don't process child nodes
