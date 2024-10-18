@@ -107,15 +107,10 @@ export default function afterEffectsJsx(options = { wrap: false }) {
             },
           });
 
+          // wrap entire code in get() method
           magicString
-            .prepend('function get() {\n')
+            .prepend('get() {\n')
             .append(`\nreturn {${exports.join(',\n\t')}}\n}`);
-
-          const asString = magicString
-            .toString()
-            .replace(`function get() {`, `get() {`);
-
-          magicString = new MagicString(asString);
         } else {
           // Remove non exported nodes and convert
           // to object property style compatible syntax
