@@ -3,12 +3,19 @@ import MagicString from 'magic-string';
 
 const whitespace = /\s/;
 
-// these will be removed
-const disallowedNodeTypes = [
-  'ExpressionStatement',
+// these will be removed in the body
+// of wrapped functions
+const bodyDisallowedNodeTypes = [
   'DebuggerStatement',
   'ImportDeclaration',
   'ExportNamedDeclaration',
+];
+
+// these will be removed within the top
+// level properties of the final jsx
+const topLevelDisallowedNodeTypes = [
+  ...bodyDisallowedNodeTypes,
+  'ExpressionStatement',
 ];
 
 // these will also be removed
@@ -102,7 +109,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
                 }
                 // don't process child nodes
                 this.skip();
-              } else if (disallowedNodeTypes.includes(node.type)) {
+              } else if (bodyDisallowedNodeTypes.includes(node.type)) {
                 // Remove every top level node that isn't
                 // a function or variable, as they're not allowed
                 removeStatement(node);
@@ -174,7 +181,7 @@ export default function afterEffectsJsx(options = { wrap: false }) {
                 }
                 // don't process child nodes
                 this.skip();
-              } else if (disallowedNodeTypes.includes(node.type)) {
+              } else if (topLevelDisallowedNodeTypes.includes(node.type)) {
                 // Remove every top level node that isn't
                 // a function or variable, as they're not allowed
                 removeStatement(node);
